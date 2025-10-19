@@ -14,6 +14,10 @@ import { SkillsForm } from "components/ResumeForm/SkillsForm";
 import { ThemeForm } from "components/ResumeForm/ThemeForm";
 import { CustomForm } from "components/ResumeForm/CustomForm";
 import { FlexboxSpacer } from "components/FlexboxSpacer";
+// inside ThemeForm.tsx (or directly in ResumeForm below ThemeForm)
+import { TemplateSelector } from "components/ResumeForm/TemplateSelector";
+// ...render <TemplateSelector /> where appropriate
+
 import { cx } from "lib/cx";
 
 const formTypeToComponent: { [type in ShowForm]: () => JSX.Element } = {

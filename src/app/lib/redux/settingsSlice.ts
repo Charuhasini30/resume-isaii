@@ -27,8 +27,10 @@ export interface Settings {
     skills: boolean;
     custom: boolean;
   };
+  selectedTemplate: TemplateKey; // ← added
 }
 
+// existing types
 export type ShowForm = keyof Settings["formToShow"];
 export type FormWithBulletPoints = keyof Settings["showBulletPoints"];
 export type GeneralSetting = Exclude<
@@ -36,10 +38,15 @@ export type GeneralSetting = Exclude<
   "formToShow" | "formToHeading" | "formsOrder" | "showBulletPoints"
 >;
 
+// template type
+export type TemplateKey = "ats-1" | "ats-2" | "creative-1" | "creative-2";
+
+// defaults
 export const DEFAULT_THEME_COLOR = "#38bdf8"; // sky-400
 export const DEFAULT_FONT_FAMILY = "Roboto";
-export const DEFAULT_FONT_SIZE = "11"; // text-base https://tailwindcss.com/docs/font-size
+export const DEFAULT_FONT_SIZE = "11"; // text-base
 export const DEFAULT_FONT_COLOR = "#171717"; // text-neutral-800
+export const DEFAULT_TEMPLATE: TemplateKey = "ats-1";
 
 export const initialSettings: Settings = {
   themeColor: DEFAULT_THEME_COLOR,
@@ -67,6 +74,7 @@ export const initialSettings: Settings = {
     skills: true,
     custom: true,
   },
+  selectedTemplate: DEFAULT_TEMPLATE, // ← added
 };
 
 export const settingsSlice = createSlice({
@@ -119,10 +127,15 @@ export const settingsSlice = createSlice({
       }>
     ) => {
       const { field, value } = action.payload;
-      draft["showBulletPoints"][field] = value;
+      draft.showBulletPoints[field] = value;
     },
     setSettings: (draft, action: PayloadAction<Settings>) => {
       return action.payload;
+    },
+
+    // ← new reducer to set template
+    setSelectedTemplate: (draft, action: PayloadAction<TemplateKey>) => {
+      draft.selectedTemplate = action.payload;
     },
   },
 });
@@ -134,28 +147,29 @@ export const {
   changeFormOrder,
   changeShowBulletPoints,
   setSettings,
+  setSelectedTemplate, // ← export
 } = settingsSlice.actions;
 
+// existing selectors
 export const selectSettings = (state: RootState) => state.settings;
 export const selectThemeColor = (state: RootState) => state.settings.themeColor;
-
 export const selectFormToShow = (state: RootState) => state.settings.formToShow;
 export const selectShowByForm = (form: ShowForm) => (state: RootState) =>
   state.settings.formToShow[form];
-
 export const selectFormToHeading = (state: RootState) =>
   state.settings.formToHeading;
 export const selectHeadingByForm = (form: ShowForm) => (state: RootState) =>
   state.settings.formToHeading[form];
-
 export const selectFormsOrder = (state: RootState) => state.settings.formsOrder;
 export const selectIsFirstForm = (form: ShowForm) => (state: RootState) =>
   state.settings.formsOrder[0] === form;
 export const selectIsLastForm = (form: ShowForm) => (state: RootState) =>
   state.settings.formsOrder[state.settings.formsOrder.length - 1] === form;
-
 export const selectShowBulletPoints =
   (form: FormWithBulletPoints) => (state: RootState) =>
     state.settings.showBulletPoints[form];
+
+// ← new selector
+export const selectTemplate = (state: RootState) => state.settings.selectedTemplate;
 
 export default settingsSlice.reducer;
